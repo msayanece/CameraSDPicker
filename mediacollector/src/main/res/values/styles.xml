@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="crop_image_theme" parent="@style/Base.Theme.AppCompat">
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:title">Edit Image</item>
+        <item name="colorPrimary">?attr/colorPrimary</item>
+        <item name="colorPrimaryDark">?attr/colorPrimaryDark</item>
+        <item name="colorAccent">?attr/colorAccent</item>
+    </style>
+</resources>

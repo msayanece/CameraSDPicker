@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MediaCollector</string>
+
+    <!--Local Storage provider-->
+    <string name="internal_storage">Internal storage</string>
+
+</resources>
