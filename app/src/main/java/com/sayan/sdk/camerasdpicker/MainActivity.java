@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.sayan.sdk.mediacollector.CameraPicProvider;
+import com.sayan.sdk.mediacollector.SdCardPicProvider;
 
 public class MainActivity extends AppCompatActivity {
     private ImageView imageView;

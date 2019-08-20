@@ -467,7 +467,9 @@ public class SdCardPicProvider {
             if (result != null) {
                 try {
                     Uri selectedImage = result.getUri();
-                    bitmapImage = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                    if (selectedImage != null) {
+                        bitmapImage = FileUtils.retrieveBitmapFromFileURI(this, selectedImage, 200, 200);
+                    }
                     if (listener != null) {
 //                        dumpImageMetaData(selectedImage);
                         listener.onGetBitmap(bitmapImage, displayName);
@@ -496,7 +498,10 @@ public class SdCardPicProvider {
                 try {
                     List<Uri> multipleURIs = getMultipleURIs(data);
                     if (multipleURIs.size() == 1){
-                        bitmapImage = MediaStore.Images.Media.getBitmap(getContentResolver(), multipleURIs.get(0));
+                        Uri fileURI = multipleURIs.get(0);
+                        if (fileURI != null) {
+                            bitmapImage = FileUtils.retrieveBitmapFromFileURI(this, fileURI, 200, 200);
+                        }
                         if (!wantToCrop) {
                             ArrayList<Bitmap> bitmaps = new ArrayList<>();
                             bitmaps.add(bitmapImage);
@@ -512,7 +517,9 @@ public class SdCardPicProvider {
                         for (Uri uri :
                                 multipleURIs) {
                             try {
-                                bitmapImage = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                                if (uri != null) {
+                                    bitmapImage = FileUtils.retrieveBitmapFromFileURI(this, uri, 200, 200);
+                                }
                                 bitmaps.add(bitmapImage);
                             } catch (OutOfMemoryError e) {
                                 e.printStackTrace();
@@ -539,7 +546,9 @@ public class SdCardPicProvider {
                 try {
                     Uri selectedImage = data.getData();
                     dumpImageMetaData(selectedImage);
-                    bitmapImage = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                    if (selectedImage != null) {
+                        bitmapImage = FileUtils.retrieveBitmapFromFileURI(this, selectedImage, 200, 200);
+                    }
                     if (!wantToCrop) {
                         listener.onGetBitmap(bitmapImage, displayName);
                         finish();
@@ -606,7 +615,9 @@ public class SdCardPicProvider {
             if (data != null) {
                 try {
                     Uri selectedImage = data.getData();
-                    bitmapImage = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                    if (selectedImage != null) {
+                        bitmapImage = FileUtils.retrieveBitmapFromFileURI(this, selectedImage, 200, 200);
+                    }
                     CropImage.activity(selectedImage)
                             .setCropShape(isOval ? CropImageView.CropShape.OVAL : CropImageView.CropShape.RECTANGLE)
                             .setActivityMenuIconColor(getResources().getColor(android.R.color.white))

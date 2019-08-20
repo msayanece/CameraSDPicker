@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import com.sayan.sdk.mediacollector.utils.FileUtils;
 import com.sayan.sdk.mediacollector.utils.ResourceUtil;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -422,9 +423,8 @@ public class CameraPicProvider {
 
         private void onCaptureImageResult(Intent data) {
             try {
-                bitmapImage = MediaStore.Images.Media.getBitmap(getContentResolver(), file);
-                if (bitmapImage == null) {
-                    bitmapImage = MediaStore.Images.Media.getBitmap(getContentResolver(), file);
+                if (file != null) {
+                    bitmapImage = FileUtils.retrieveBitmapFromFileURI(this, file, 200, 200);
                 }
                 if (!wantToCrop) {
                     listener.onGetBitmap(bitmapImage, mCurrentPhotoPath);
@@ -455,7 +455,9 @@ public class CameraPicProvider {
             if (result != null) {
                 try {
                     Uri selectedImage = result.getUri();
-                    bitmapImage = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                    if (selectedImage != null) {
+                        bitmapImage = FileUtils.retrieveBitmapFromFileURI(this, selectedImage, 200, 200);
+                    }
                     String imagePath = storeImage(bitmapImage);
                     listener.onGetBitmap(bitmapImage, imagePath);
                     this.finish();

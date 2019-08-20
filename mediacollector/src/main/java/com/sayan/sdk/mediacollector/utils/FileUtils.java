@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -15,16 +16,25 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 
 public class FileUtils {
-    private FileUtils() {} //private constructor to enforce Singleton pattern
+    private FileUtils() {
+    } //private constructor to enforce Singleton pattern
 
-    /** TAG for log messages. */
+    /**
+     * TAG for log messages.
+     */
     static final String TAG = "FileUtils";
     private static final boolean DEBUG = false; // Set to true to enable logging
 
@@ -41,7 +51,7 @@ public class FileUtils {
      *
      * @param uri
      * @return Extension including the dot("."); "" if there is no extension;
-     *         null if uri was null.
+     * null if uri was null.
      */
     public static String getExtension(String uri) {
         if (uri == null) {
@@ -181,9 +191,9 @@ public class FileUtils {
      * Get the value of the data column for this Uri. This is useful for
      * MediaStore Uris, and other file-based ContentProviders.
      *
-     * @param context The context.
-     * @param uri The Uri to query.
-     * @param selection (Optional) Filter used in the query.
+     * @param context       The context.
+     * @param uri           The Uri to query.
+     * @param selection     (Optional) Filter used in the query.
      * @param selectionArgs (Optional) Selection arguments used in the query.
      * @return The value of the _data column, which is typically a file path.
      * @author paulburke
@@ -209,7 +219,7 @@ public class FileUtils {
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             if (cursor != null)
                 cursor.close();
         }
@@ -225,9 +235,9 @@ public class FileUtils {
      * represents a local file.
      *
      * @param context The context.
-     * @param uri The Uri to query.
-     * @see #getFile(Context, Uri)
+     * @param uri     The Uri to query.
      * @author paulburke
+     * @see #getFile(Context, Uri)
      */
     public static String getPath(final Context context, final Uri uri) {
 
@@ -267,7 +277,7 @@ public class FileUtils {
             else if (isDownloadsDocument(uri)) {
 
                 final String id = DocumentsContract.getDocumentId(uri);
-                Uri contentUri=Uri.parse("");
+                Uri contentUri = Uri.parse("");
                 try {
                     contentUri = ContentUris.withAppendedId(
                             Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
@@ -293,7 +303,7 @@ public class FileUtils {
                 }
 
                 final String selection = "_id=?";
-                final String[] selectionArgs = new String[] {
+                final String[] selectionArgs = new String[]{
                         split[1]
                 };
 
@@ -319,6 +329,7 @@ public class FileUtils {
 
     /**
      * Check to see if a file path is actually an image file
+     *
      * @param path the file path
      * @return boolean true if it is a image file type
      */
@@ -329,6 +340,7 @@ public class FileUtils {
 
     /**
      * Check to see if a file path is actually an video file
+     *
      * @param path the file path
      * @return boolean true if it is a video file type
      */
@@ -341,9 +353,9 @@ public class FileUtils {
      * Convert Uri into File, if possible.
      *
      * @return file A local file that the Uri was pointing to, or null if the
-     *         Uri is unsupported or pointed to a remote resource.
-     * @see #getPath(Context, Uri)
+     * Uri is unsupported or pointed to a remote resource.
      * @author paulburke
+     * @see #getPath(Context, Uri)
      */
     public static File getFile(Context context, Uri uri) {
         if (uri != null) {
@@ -448,8 +460,7 @@ public class FileUtils {
                                 id,
                                 MediaStore.Video.Thumbnails.MINI_KIND,
                                 null);
-                    }
-                    else if (mimeType.contains(FileUtils.MIME_TYPE_IMAGE)) {
+                    } else if (mimeType.contains(FileUtils.MIME_TYPE_IMAGE)) {
                         bm = MediaStore.Images.Thumbnails.getThumbnail(
                                 resolver,
                                 id,
@@ -524,5 +535,101 @@ public class FileUtils {
         // Only return URIs that can be opened with ContentResolver
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         return intent;
+    }
+
+    private static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    public static Bitmap decodeSampledBitmapFromUri(Context context, Uri imageUri, int reqWidth, int reqHeight) throws FileNotFoundException{
+        Bitmap bitmap = null;
+        try {
+            // Get input stream of the image
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            InputStream iStream = context.getContentResolver().openInputStream(imageUri);
+
+            // First decode with inJustDecodeBounds=true to check dimensions
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(iStream, null, options);
+            if (iStream != null) {
+                iStream.close();
+            }
+            iStream = context.getContentResolver().openInputStream(imageUri);
+
+            // Calculate inSampleSize
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+            bitmap = BitmapFactory.decodeStream(iStream, null, options);
+            if (iStream != null) {
+                iStream.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+    /**
+     * Use this method to retrieve Bitmap from a File URI with sampled down to required width/height.
+     * Pass both reqWidth and reqHeight as 0 vale to retrieve original size Bitmap - may produce OutOfMemoryError.
+     * @param context Not null context
+     * @param fileUri Not null URI of the File
+     * @param reqWidth required width
+     * @param reqHeight required height
+     * @return the retrieved Bitmap object
+     * @throws FileNotFoundException
+     */
+    public static @Nullable Bitmap retrieveBitmapFromFileURI(
+            @NonNull Context context,
+            @NonNull Uri fileUri,
+            int reqWidth,
+            int reqHeight
+    ) throws FileNotFoundException {
+        Bitmap bitmapImage = null;
+        if (reqHeight == 0 && reqWidth == 0){
+            try {
+                bitmapImage = MediaStore.Images.Media.getBitmap(context.getContentResolver(), fileUri);
+                if (bitmapImage == null){
+                    bitmapImage = MediaStore.Images.Media.getBitmap(context.getContentResolver(), fileUri);
+                }
+                return bitmapImage;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        bitmapImage = FileUtils.decodeSampledBitmapFromUri(context, fileUri, reqWidth, reqHeight);
+        if (bitmapImage == null) {
+            bitmapImage = FileUtils.decodeSampledBitmapFromUri(context, fileUri, reqWidth, reqHeight);
+        }
+        if (bitmapImage == null) {
+            try {
+                bitmapImage = MediaStore.Images.Media.getBitmap(context.getContentResolver(), fileUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return bitmapImage;
     }
 }
