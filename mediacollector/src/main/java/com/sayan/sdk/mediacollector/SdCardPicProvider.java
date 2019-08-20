@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.sayan.sdk.mediacollector.utils.FileUtils.getFile;
+import static com.sayan.sdk.mediacollector.utils.ResourceUtil.getThemeColor;
 
 public class SdCardPicProvider {
     private static final String TAG = "SD Card pic provider";
@@ -609,7 +610,7 @@ public class SdCardPicProvider {
                     CropImage.activity(selectedImage)
                             .setCropShape(isOval ? CropImageView.CropShape.OVAL : CropImageView.CropShape.RECTANGLE)
                             .setActivityMenuIconColor(getResources().getColor(android.R.color.white))
-                            .setBorderCornerColor(ResourceUtil.fetchAccentColor(this))
+//                            .setBorderCornerColor(getThemeColor(getApplicationContext(), R.attr.colorAccent))
                             .setGuidelines(CropImageView.Guidelines.ON)
                             .start(this);
                 } catch (IOException e) {

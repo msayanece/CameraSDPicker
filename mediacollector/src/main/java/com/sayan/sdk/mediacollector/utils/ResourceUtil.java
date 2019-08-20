@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.TypedValue;
 
+import androidx.annotation.AttrRes;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+
 import com.sayan.sdk.mediacollector.R;
 import com.sayan.sdk.mediacollector.exceptions.ResourceNotFoundException;
 
@@ -21,5 +25,17 @@ public class ResourceUtil {
         array.recycle();
 
         return color;
+    }
+
+    @ColorInt
+    public static int getThemeColor
+            (
+                    @NonNull final Context context,
+                    @AttrRes final int attributeColor
+            )
+    {
+        final TypedValue value = new TypedValue();
+        context.getTheme ().resolveAttribute (attributeColor, value, true);
+        return value.data;
     }
 }

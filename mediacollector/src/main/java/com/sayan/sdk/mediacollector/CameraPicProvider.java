@@ -445,7 +445,7 @@ public class CameraPicProvider {
             CropImage.activity(file)
                     .setCropShape(isOval ? CropImageView.CropShape.OVAL : CropImageView.CropShape.RECTANGLE)
                     .setActivityMenuIconColor(getResources().getColor(android.R.color.white))
-                    .setBorderCornerColor(ResourceUtil.fetchAccentColor(this))
+//                    .setBorderCornerColor(ResourceUtil.getThemeColor(getApplicationContext(), R.attr.colorAccent))
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .start(this);
 

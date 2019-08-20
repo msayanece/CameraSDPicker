@@ -3,7 +3,9 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <application>
+    <application
+        android:largeHeap="true"
+        >
         <activity
             android:name=".CameraPicProvider$PermissionAndResultReceiverActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
@@ -15,5 +17,14 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/crop_image_theme" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.sayan.sdk.camerasdpicker.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
 </manifest>

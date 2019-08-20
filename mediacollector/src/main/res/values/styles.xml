@@ -4,8 +4,8 @@
     <style name="crop_image_theme" parent="@style/Base.Theme.AppCompat">
         <item name="android:windowBackground">@android:color/white</item>
         <item name="android:title">Edit Image</item>
-        <item name="colorPrimary">?attr/colorPrimary</item>
-        <item name="colorPrimaryDark">?attr/colorPrimaryDark</item>
-        <item name="colorAccent">?attr/colorAccent</item>
+        <item name="colorPrimary">#CE0505</item>
+        <item name="colorPrimaryDark">#850000</item>
+        <item name="colorAccent">#CE0505</item>
     </style>
 </resources>
