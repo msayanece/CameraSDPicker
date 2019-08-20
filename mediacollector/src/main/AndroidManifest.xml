@@ -8,7 +8,7 @@
         >
         <activity
             android:name=".CameraPicProvider$PermissionAndResultReceiverActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
 
         <activity
             android:name=".SdCardPicProvider$ResultReceiverActivity"

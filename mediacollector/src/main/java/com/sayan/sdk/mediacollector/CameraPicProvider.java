@@ -21,7 +21,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.sayan.sdk.mediacollector.utils.FileUtils;
-import com.sayan.sdk.mediacollector.utils.ResourceUtil;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -126,17 +125,17 @@ public class CameraPicProvider {
         CameraPicProvider.isOval = isOval;
         CameraPicProvider.listener = listener;
         CameraPicProvider.wantToCrop = wantToCrop;
-        openPermissionAndResultReciver(false);
+        openPermissionAndResultReceiver(false);
     }
 
     //for camera video
     public CameraPicProvider(Context context, GetFileListener listener) {
         this.context = context;
         fileListener = listener;
-        openPermissionAndResultReciver(true);
+        openPermissionAndResultReceiver(true);
     }
 
-    private void openPermissionAndResultReciver(boolean isVideo) {
+    private void openPermissionAndResultReceiver(boolean isVideo) {
         Intent intent = new Intent(context, PermissionAndResultReceiverActivity.class);
         intent.putExtra("isVideo", isVideo);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
