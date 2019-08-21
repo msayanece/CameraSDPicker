@@ -11,6 +11,8 @@ import android.widget.Toast;
 import com.sayan.sdk.mediacollector.CameraPicProvider;
 import com.sayan.sdk.mediacollector.SdCardPicProvider;
 
+import java.io.File;
+
 public class MainActivity extends AppCompatActivity {
     private ImageView imageView;
 
@@ -22,11 +24,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void choosePic(View view) {
-        new CameraPicProvider(this, true, false, new CameraPicProvider.GetBitmapListener() {
+        new CameraPicProvider(this, new CameraPicProvider.GetFileListener() {
             @Override
-            public void onGetBitmap(Bitmap bitmapImage, String filepath) {
-                Toast.makeText(MainActivity.this, "Image picked successfully", Toast.LENGTH_SHORT).show();
-                imageView.setImageBitmap(bitmapImage);
+            public void onGetFile(File file) {
+                Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT).show();
             }
         });
     }
