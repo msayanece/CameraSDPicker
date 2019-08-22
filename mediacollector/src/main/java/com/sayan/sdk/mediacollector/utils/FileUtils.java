@@ -26,7 +26,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
+
+import static android.os.Environment.DIRECTORY_DCIM;
 
 public class FileUtils {
     private FileUtils() {
@@ -631,5 +635,31 @@ public class FileUtils {
             }
         }
         return bitmapImage;
+    }
+
+    /**
+     * create a temporary file in DIRECTORY_DCIM
+     * @return the file
+     */
+    public static File getFile() {
+
+        File folder = Environment.getExternalStoragePublicDirectory(DIRECTORY_DCIM);// the file path
+        //if it doesn't exist the folder will be created
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+        String fileName = generateFileName();
+        File tempFile = null;
+        try {
+            tempFile = File.createTempFile(fileName, ".jpeg", folder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return tempFile;
+    }
+
+    private static String generateFileName() {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        return "JPEG_" + timeStamp + "_";
     }
 }

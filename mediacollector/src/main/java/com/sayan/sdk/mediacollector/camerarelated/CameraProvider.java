@@ -15,9 +15,19 @@ import java.io.File;
  */
 public class CameraProvider {
 
+    public interface ImagePickerListener {
+        void onImagePicked(Bitmap bitmapImage, String filepath);
+    }
+
+    public interface VideoPickerListener {
+        void onVideoPicked(File file);
+    }
+
     private static CameraProvider instance = new CameraProvider();
     private Context context;
-    private CameraRelatedDataHolder cameraRelatedDataHolder;
+    private boolean shouldCropImage;
+    private boolean shouldCropShapeOval;
+    private ImagePickerListener imagePickerListener;
 
     private CameraProvider() {
     }
@@ -27,20 +37,38 @@ public class CameraProvider {
         return instance;
     }
 
-    public interface ImagePickerListener {
-        void onImagePicked(Bitmap bitmapImage, String filepath);
+    static CameraProvider getInstance() {
+        return instance;
     }
 
-    public interface VideoPickerListener {
-        void onVideoPicked(File file);
+    public Context getContext() {
+        return context;
+    }
+
+    public boolean isShouldCropImage() {
+        return shouldCropImage;
+    }
+
+    public boolean isShouldCropShapeOval() {
+        return shouldCropShapeOval;
+    }
+
+    public ImagePickerListener getImagePickerListener() {
+        return imagePickerListener;
     }
 
     public void captureImage(boolean shouldCropImage, boolean shouldCropShapeOval, ImagePickerListener imagePickerListener) {
-        cameraRelatedDataHolder = CameraRelatedDataHolder.getInstance();
-        cameraRelatedDataHolder.setShouldCropImage(shouldCropImage);
-        cameraRelatedDataHolder.setShouldCropShapeOval(shouldCropShapeOval);
-        cameraRelatedDataHolder.setImagePickerListener(imagePickerListener);
+        this.shouldCropImage = shouldCropImage;
+        this.shouldCropShapeOval = shouldCropShapeOval;
+        this.imagePickerListener = imagePickerListener;
         Intent intent = new Intent(context, CaptureImageActivity.class);
         context.startActivity(intent);
+    }
+
+    void onDestroy(){
+        context = null;
+        shouldCropImage = false;
+        shouldCropShapeOval = false;
+        imagePickerListener = null;
     }
 }
