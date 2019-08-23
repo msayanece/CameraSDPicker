@@ -16,16 +16,19 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.sayan.sdk.mediacollector.utils.FileUtils;
 
 import java.io.File;
+
 import static com.sayan.sdk.mediacollector.camerarelated.CameraConstants.PERMISSION_REQUEST_FOR_CAMERA;
 import static com.sayan.sdk.mediacollector.camerarelated.CameraConstants.PERMISSION_REQUEST_FOR_EXTERNAL_STORAGE;
 import static com.sayan.sdk.mediacollector.camerarelated.CameraConstants.REQUEST_CAMERA_INTENT;
 
 public class CaptureImageActivity extends Activity {
+    private static final String TAG = "CaptureImageActivity";
 
     private Uri mCapturedImageFileURI;
     private String mCurrentPhotoPath;
@@ -38,7 +41,7 @@ public class CaptureImageActivity extends Activity {
             requestPermissionForExternalStorage();
         } else {
             mCapturedImageFileURI = Uri.parse(savedInstanceState.getString("mCapturedImageFileURI"));
-            mCurrentPhotoPath = savedInstanceState.getString("path");
+            mCurrentPhotoPath = savedInstanceState.getString("mCurrentPhotoPath");
         }
     }
 
@@ -159,9 +162,12 @@ public class CaptureImageActivity extends Activity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        Log.d(TAG, "onActivityResult: called");
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
+            Log.d(TAG, "onActivityResult: RESULT_OK");
             if (requestCode == REQUEST_CAMERA_INTENT) {
+                Log.d(TAG, "onActivityResult: REQUEST_CAMERA_INTENT");
                 onCaptureImageResult(data);
             }
             //TODO uncomment
@@ -182,9 +188,11 @@ public class CaptureImageActivity extends Activity {
 
     private void onCaptureImageResult(Intent data) {
         try {
+            Log.d(TAG, "onCaptureImageResult: called");
             Bitmap bitmapImage = null;
             CameraProvider cameraProvider = CameraProvider.getInstance();
             if (mCapturedImageFileURI != null) {
+                Log.d(TAG, "onCaptureImageResult: mCapturedImageFileURI not null");
                 bitmapImage = FileUtils.retrieveBitmapFromFileURI(this, mCapturedImageFileURI, 200, 200);
             }
             if (!cameraProvider.isShouldCropImage()) {
@@ -201,20 +209,36 @@ public class CaptureImageActivity extends Activity {
     }
 
     private void clearNFinishActivity() {
+//        CameraProvider.getInstance().onDestroy();
+        unlockScreenOrientationToCurrent();
         finish();
     }
 
-
     @Override
-    protected void onStop() {
-        unlockScreenOrientationToCurrent();
-        super.onStop();
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mCapturedImageFileURI = Uri.parse(savedInstanceState.getString("mCapturedImageFileURI"));
+            mCurrentPhotoPath = savedInstanceState.getString("mCurrentPhotoPath");
+        }
+        Log.d(TAG, "onRestoreInstanceState: called - mCapturedImageFileURI: "
+                + mCapturedImageFileURI + ", mCurrentPhotoPath: " + mCurrentPhotoPath);
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
+
     @Override
-    protected void onDestroy() {
-        CameraProvider.getInstance().onDestroy();
-        super.onDestroy();
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG, "onSaveInstanceState: called & saved - mCapturedImageFileURI: "
+                + mCapturedImageFileURI + ", mCurrentPhotoPath: " + mCurrentPhotoPath);
+        if (outState != null) {
+            if (mCapturedImageFileURI != null) {
+                outState.putString("mCapturedImageFileURI", mCapturedImageFileURI.toString());
+            }
+            if (mCurrentPhotoPath != null) {
+                outState.putString("mCurrentPhotoPath", mCurrentPhotoPath);
+            }
+        }
+        super.onSaveInstanceState(outState);
     }
 
     private void lockScreenOrientationToCurrent() {

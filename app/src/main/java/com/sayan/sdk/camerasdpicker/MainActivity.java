@@ -2,6 +2,7 @@ package com.sayan.sdk.camerasdpicker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Application;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
@@ -22,6 +23,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         imageView = findViewById(R.id.image);
+        if (savedInstanceState != null){
+            CameraProvider instance = CameraProvider.getInstance();
+            instance.setContext(this);
+            instance.setShouldCropImage(false);
+            instance.setShouldCropShapeOval(false);
+            instance.setImagePickerListener( new CameraProvider.ImagePickerListener() {
+                @Override
+                public void onImagePicked(Bitmap bitmapImage, String filepath) {
+                    imageView.setImageBitmap(bitmapImage);
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     public void choosePic(View view) {

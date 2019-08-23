@@ -33,13 +33,11 @@ import java.util.Date;
 import static android.os.Environment.DIRECTORY_DCIM;
 
 public class FileUtils {
+    private static final String TAG = "CaptureImageFile";
+
     private FileUtils() {
     } //private constructor to enforce Singleton pattern
 
-    /**
-     * TAG for log messages.
-     */
-    static final String TAG = "FileUtils";
     private static final boolean DEBUG = false; // Set to true to enable logging
 
     public static final String MIME_TYPE_AUDIO = "audio/*";
@@ -610,6 +608,7 @@ public class FileUtils {
             int reqWidth,
             int reqHeight
     ) throws FileNotFoundException {
+        Log.d(TAG, "retrieveBitmapFromFileURI: called");
         Bitmap bitmapImage = null;
         if (reqHeight == 0 && reqWidth == 0){
             try {
@@ -625,12 +624,15 @@ public class FileUtils {
         }
         bitmapImage = FileUtils.decodeSampledBitmapFromUri(context, fileUri, reqWidth, reqHeight);
         if (bitmapImage == null) {
+            Log.d(TAG, "retrieveBitmapFromFileURI: 1st attempt failed");
             bitmapImage = FileUtils.decodeSampledBitmapFromUri(context, fileUri, reqWidth, reqHeight);
         }
         if (bitmapImage == null) {
+            Log.d(TAG, "retrieveBitmapFromFileURI: 2nd attempt failed");
             try {
                 bitmapImage = MediaStore.Images.Media.getBitmap(context.getContentResolver(), fileUri);
             } catch (IOException e) {
+                Log.d(TAG, "retrieveBitmapFromFileURI: 3rd attempt also failed");
                 e.printStackTrace();
             }
         }

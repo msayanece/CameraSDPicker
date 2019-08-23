@@ -37,7 +37,7 @@ public class CameraProvider {
         return instance;
     }
 
-    static CameraProvider getInstance() {
+    public static CameraProvider getInstance() {
         return instance;
     }
 
@@ -55,6 +55,22 @@ public class CameraProvider {
 
     public ImagePickerListener getImagePickerListener() {
         return imagePickerListener;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public void setShouldCropImage(boolean shouldCropImage) {
+        this.shouldCropImage = shouldCropImage;
+    }
+
+    public void setShouldCropShapeOval(boolean shouldCropShapeOval) {
+        this.shouldCropShapeOval = shouldCropShapeOval;
+    }
+
+    public void setImagePickerListener(ImagePickerListener imagePickerListener) {
+        this.imagePickerListener = imagePickerListener;
     }
 
     public void captureImage(boolean shouldCropImage, boolean shouldCropShapeOval, ImagePickerListener imagePickerListener) {
