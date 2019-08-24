@@ -19,9 +19,13 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.sayan.sdk.mediacollector.R;
 import com.sayan.sdk.mediacollector.utils.FileUtils;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
+import java.io.IOException;
 
 import static com.sayan.sdk.mediacollector.camerarelated.CameraConstants.PERMISSION_REQUEST_FOR_CAMERA;
 import static com.sayan.sdk.mediacollector.camerarelated.CameraConstants.PERMISSION_REQUEST_FOR_EXTERNAL_STORAGE;
@@ -181,18 +185,16 @@ public class CaptureImageActivity extends Activity {
                 //camera activity was started by REQUEST_CAMERA_INTENT
                 Log.d(TAG, "onActivityResult: REQUEST_CAMERA_INTENT");
                 onCaptureImageResult();
+            } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+                //camera activity was started by CROP_IMAGE_ACTIVITY_REQUEST_CODE
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                if (resultCode == RESULT_OK) {
+                    getImageFromCropActivity(result);
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    Exception error = result.getError();
+                    finish();
+                }
             }
-            //TODO uncomment
-//            else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            //camera activity was started by CROP_IMAGE_ACTIVITY_REQUEST_CODE
-//                CropImage.ActivityResult result = CropImage.getActivityResult(data);
-//                if (resultCode == RESULT_OK) {
-//                    getImageFromCropActivity(result);
-//                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-//                    Exception error = result.getError();
-//                    clearNFinishActivity();
-//                }
-//            }
         } else if (resultCode == RESULT_CANCELED) {
             //User canceled the camera capturing activity
             Toast.makeText(this, "Image capturing canceled", Toast.LENGTH_SHORT).show();
@@ -220,14 +222,45 @@ public class CaptureImageActivity extends Activity {
                 clearNFinishActivity();
             } else {
                 //open crop image activity
-                //TODO uncomment
-//                showImageCropperActivity(isOval);
+                showImageCropperActivity(cameraProvider.isShouldCropShapeOval());
             }
         } catch (Exception e) {
             //something went wrong, finish this activity so that the actual visible activity can again gain control
             e.printStackTrace();
             clearNFinishActivity();
         }
+    }
+
+    private void showImageCropperActivity(boolean isOval) {
+
+        CropImage.activity(mCapturedImageFileURI)
+                .setCropShape(isOval ? CropImageView.CropShape.OVAL : CropImageView.CropShape.RECTANGLE)
+                .setActivityMenuIconColor(getResources().getColor(android.R.color.white))
+//                .setBorderCornerColor(getResources().getColor(R.color.colorAccent))
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .start(this);
+
+    }
+
+    private void getImageFromCropActivity(CropImage.ActivityResult result) {
+        if (result != null) {
+            try {
+                Uri selectedImage = result.getUri();
+//                Bitmap bitmapImage = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                Bitmap bitmapImage = FileUtils.retrieveBitmapFromFileURI(
+                        this, selectedImage, 200, 200
+                );
+                String imagePath = FileUtils.storeImage(this, bitmapImage);
+                CameraProvider.getInstance().getImagePickerListener().onImagePicked(bitmapImage, imagePath);
+                this.finish();
+            } catch (IOException e) {
+                e.printStackTrace();
+                clearNFinishActivity();
+            }
+        } else {
+            clearNFinishActivity();
+        }
+
     }
 
     //region finish this activity

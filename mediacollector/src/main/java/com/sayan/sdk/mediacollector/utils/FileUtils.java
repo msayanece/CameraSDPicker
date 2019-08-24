@@ -22,6 +22,7 @@ import androidx.annotation.Nullable;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
@@ -663,5 +664,52 @@ public class FileUtils {
     private static String generateFileName() {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         return "JPEG_" + timeStamp + "_";
+    }
+
+    public static String storeImage(Context context, Bitmap image) {
+        File pictureFile = getOutputMediaFile(context);
+        String absolutePath = "";
+        if (pictureFile == null) {
+            //Log.d(TAG, "Error creating media file, check storage permissions: ");// e.getMessage());
+            return "";
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+            fos.close();
+
+            absolutePath = pictureFile.getAbsolutePath();
+        } catch (FileNotFoundException e) {
+            // Log.d(TAG, "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            // Log.d(TAG, "Error accessing file: " + e.getMessage());
+        }
+        return absolutePath;
+    }
+
+    private static File getOutputMediaFile(Context context){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+        File mediaStorageDir = context.getCacheDir();
+//            File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+//                    + "/Android/data/"
+//                    + getApplicationContext().getPackageName()
+//                    + "/cache");
+
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        String mImageName="P_"+ timeStamp +".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        return mediaFile;
     }
 }
