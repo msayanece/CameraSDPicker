@@ -25,8 +25,8 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         //initialize CameraProvider & setup data
         cameraProvider = CameraProvider.getInstance(this);
-        cameraProvider.setupProviderForImage(true,
-                false,
+        cameraProvider.setupProviderForImage(false,
+                true,
                 new CameraProvider.ImagePickerListener() {
                     @Override
                     public void onImagePicked(Bitmap bitmapImage, String filepath) {

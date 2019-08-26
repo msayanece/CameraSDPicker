@@ -55,7 +55,7 @@ public class CaptureImageActivity extends Activity {
         }
     }
 
-    //region request permission for External Storage & Camera
+    //<editor-fold desc="request permission for External Storage & Camera">
     /**
      * Request for external storage permission
      */
@@ -110,9 +110,6 @@ public class CaptureImageActivity extends Activity {
 
     /**
      * Permission Request result callback
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
@@ -146,7 +143,7 @@ public class CaptureImageActivity extends Activity {
             }
         }
     }
-    //endregion
+    //</editor-fold>
 
     /**
      * Start the implicit intent
@@ -263,14 +260,13 @@ public class CaptureImageActivity extends Activity {
 
     }
 
-    //region finish this activity
+    //<editor-fold desc="finish this activity">
     private void clearNFinishActivity() {
 //        CameraProvider.getInstance().onDestroy();
         unlockScreenOrientationToCurrent();
         finish();
     }
-    //endregion
-
+    //</editor-fold>
 
     //<editor-fold desc="onRestore & onSave InstanceState">
     @Override
@@ -302,7 +298,6 @@ public class CaptureImageActivity extends Activity {
         super.onSaveInstanceState(outState);
     }
     //</editor-fold>
-
 
     //<editor-fold desc="lock/ unlock orientation">
     /**
