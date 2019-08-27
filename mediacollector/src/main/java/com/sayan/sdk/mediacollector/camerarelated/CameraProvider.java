@@ -30,9 +30,13 @@ public class CameraProvider {
 
     //<editor-fold desc="properties">
     private Context context;
+    //Image
     private boolean shouldCropImage;
     private boolean shouldCropShapeOval;
     private ImagePickerListener imagePickerListener;
+    //Video
+    private VideoPickerListener videoPickerListener;
+
     //</editor-fold>
 
     //<editor-fold desc="constructor">
@@ -67,6 +71,11 @@ public class CameraProvider {
     ImagePickerListener getImagePickerListener() {
         return imagePickerListener;
     }
+
+    VideoPickerListener getVideoPickerListener() {
+        return videoPickerListener;
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="setters">
@@ -85,6 +94,11 @@ public class CameraProvider {
     void setImagePickerListener(ImagePickerListener imagePickerListener) {
         this.imagePickerListener = imagePickerListener;
     }
+
+    void setVideoPickerListener(VideoPickerListener videoPickerListener) {
+        this.videoPickerListener = videoPickerListener;
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="capturing image">
@@ -97,8 +111,22 @@ public class CameraProvider {
     public void captureImage() {
         if (imagePickerListener == null) throw new CameraProviderSetupException("imagePickerListener not set.");
         if (context == null) throw new CameraProviderSetupException("Context is not set. " +
-                "(Use Activity onStart() method for initialize & setup CameraProvider)");
+                "(Use Activity onStart() method to initialize & setup CameraProvider)");
         Intent intent = new Intent(context, CaptureImageActivity.class);
+        context.startActivity(intent);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="capturing video">
+    public void setupProviderForVideo(VideoPickerListener videoPickerListener) {
+        this.videoPickerListener = videoPickerListener;
+    }
+
+    public void captureVideo() {
+        if (videoPickerListener == null) throw new CameraProviderSetupException("videoPickerListener not set.");
+        if (context == null) throw new CameraProviderSetupException("Context is not set. " +
+                "(Use Activity onStart() method to initialize & setup CameraProvider)");
+        Intent intent = new Intent(context, CaptureVideoActivity.class);
         context.startActivity(intent);
     }
     //</editor-fold>
@@ -108,5 +136,6 @@ public class CameraProvider {
         shouldCropImage = false;
         shouldCropShapeOval = false;
         imagePickerListener = null;
+        videoPickerListener = null;
     }
 }

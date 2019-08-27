@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/image"
+    <VideoView
+        android:id="@+id/video"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -24,6 +24,6 @@
         android:onClick="choosePic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/image" />
+        app:layout_constraintTop_toTopOf="@+id/video" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
