@@ -171,6 +171,7 @@ public class CaptureVideoActivity extends Activity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        //check for REQUEST_VIDEO_INTENT and capture video file
         Log.d(TAG, "onActivityResult: called");
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
