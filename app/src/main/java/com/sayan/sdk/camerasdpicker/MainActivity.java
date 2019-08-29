@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.sayan.sdk.mediacollector.camerarelated.CameraProvider;
 import com.sayan.sdk.mediacollector.sdcardrelated.SDCardProvider;
 
 public class MainActivity extends AppCompatActivity {
     private SDCardProvider sdCardProvider;
     private ImageView imageView;
+    private CameraProvider cameraProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         /*//initialize CameraProvider & setup data for Image
         cameraProvider = CameraProvider.getInstance(this);
-        cameraProvider.setupProviderForImage(false,
+        cameraProvider.setupProviderForImage(true,
                 true,
                 new CameraProvider.ImagePickerListener() {
                     @Override
@@ -36,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         //initialize CameraProvider & setup data for Video
         sdCardProvider = SDCardProvider.getInstance(this);
-        sdCardProvider.setupProviderForImage(true, true, new SDCardProvider.ImagePickerListener() {
+        sdCardProvider.setupProviderForImage(true, false, new SDCardProvider.ImagePickerListener() {
             @Override
             public void onImagePicked(Bitmap bitmap, String imagePath) {
                 imageView.setImageBitmap(bitmap);
@@ -53,9 +55,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         sdCardProvider.releaseProviderData();
+//        cameraProvider.releaseProviderData();
     }
 
     public void choosePic(View view) {
         sdCardProvider.pickImage();
+//        cameraProvider.captureImage();
     }
 }

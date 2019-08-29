@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.sayan.sdk.mediacollector.R;
 import com.sayan.sdk.mediacollector.utils.FileUtils;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -136,7 +137,7 @@ public class PickImageFromSDActivity extends Activity {
             CropImage.activity(selectedImage)
                     .setCropShape(isOval ? CropImageView.CropShape.OVAL : CropImageView.CropShape.RECTANGLE)
                     .setActivityMenuIconColor(getResources().getColor(android.R.color.white))
-//                            .setBorderCornerColor(getThemeColor(getApplicationContext(), R.attr.colorAccent))
+                    .setBorderCornerColor(getResources().getColor(android.R.color.darker_gray))
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .start(this);
         }
