@@ -2,23 +2,22 @@ package com.sayan.sdk.camerasdpicker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.VideoView;
+import android.widget.ImageView;
 
-import com.sayan.sdk.mediacollector.camerarelated.CameraProvider;
-
-import java.io.File;
+import com.sayan.sdk.mediacollector.sdcardrelated.SDCardProvider;
 
 public class MainActivity extends AppCompatActivity {
-    private CameraProvider cameraProvider;
-    private VideoView videoView;
+    private SDCardProvider sdCardProvider;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        videoView = findViewById(R.id.video);
+        imageView = findViewById(R.id.image);
     }
 
     @Override
@@ -36,12 +35,11 @@ public class MainActivity extends AppCompatActivity {
                 });*/
 
         //initialize CameraProvider & setup data for Video
-        cameraProvider = CameraProvider.getInstance(this);
-        cameraProvider.setupProviderForVideo(new CameraProvider.VideoPickerListener() {
+        sdCardProvider = SDCardProvider.getInstance(this);
+        sdCardProvider.setupProviderForImage(false, false, new SDCardProvider.ImagePickerListener() {
             @Override
-            public void onVideoPicked(File file) {
-                videoView.setVideoPath(file.getAbsolutePath());
-                videoView.start();
+            public void onImagePicked(Bitmap bitmap, String imagePath) {
+                imageView.setImageBitmap(bitmap);
             }
         });
     }
@@ -54,10 +52,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        cameraProvider.releaseProviderData();
+        sdCardProvider.releaseProviderData();
     }
 
     public void choosePic(View view) {
-        cameraProvider.captureVideo();
+        sdCardProvider.pickImage();
     }
 }
