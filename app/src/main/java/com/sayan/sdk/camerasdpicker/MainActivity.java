@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         //initialize CameraProvider & setup data for Video
         sdCardProvider = SDCardProvider.getInstance(this);
-        sdCardProvider.setupProviderForImage(false, false, new SDCardProvider.ImagePickerListener() {
+        sdCardProvider.setupProviderForImage(true, true, new SDCardProvider.ImagePickerListener() {
             @Override
             public void onImagePicked(Bitmap bitmap, String imagePath) {
                 imageView.setImageBitmap(bitmap);

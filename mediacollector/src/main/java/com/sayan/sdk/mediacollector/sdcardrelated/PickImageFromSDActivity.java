@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat;
 
 import com.sayan.sdk.mediacollector.utils.FileUtils;
 import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -95,64 +96,78 @@ public class PickImageFromSDActivity extends Activity {
                     break;
             }
         } else if (resultCode == RESULT_CANCELED) {
-            finish();
+            Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show();
+            clearNFinishActivity();
         }
     }
 
     private void onSelectFromGalleryResult(Intent data) {
-//        if (data != null) {
-//            try {
-//                Uri selectedImage = data.getData();
-//                dumpImageMetaData(selectedImage);
-//                if (selectedImage != null) {
-//                    bitmapImage = FileUtils.retrieveBitmapFromFileURI(this, selectedImage, 200, 200);
-//                }
-//                if (!wantToCrop) {
-//                    listener.onGetBitmap(bitmapImage, displayName);
-//                    finish();
-//                } else {
-//                    showImageCroperActivity(data, isOval);
-//                }
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                finish();
-//            }
-//        }
+        if (data != null) {
+            try {
+                Uri selectedImage = data.getData();
+                String displayName = FileUtils.dumpImageMetaData(this, selectedImage);
+                Bitmap bitmapImage = null;
+                if (selectedImage != null) {
+                    bitmapImage = FileUtils.retrieveBitmapFromFileURI(this, selectedImage, 200, 200);
+                }
+                if (!SDCardProvider.getInstance().isShouldCropImage()) {
+                    SDCardProvider.getInstance().getImagePickerListener().onImagePicked(bitmapImage, displayName);
+                    finish();
+                } else {
+                    showImageCropperActivity(data, SDCardProvider.getInstance().isShouldCropShapeOval());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                finish();
+            }
+        }
+    }
+
+    /**
+     * Shows the image cropper activity where user can crop the picked image in oval shape or
+     * rectangle shape
+     *
+     * @param data   the picture data
+     * @param isOval crop as oval or rectangle
+     */
+    private void showImageCropperActivity(Intent data, boolean isOval) {
+        if (data != null) {
+            Uri selectedImage = data.getData();
+            CropImage.activity(selectedImage)
+                    .setCropShape(isOval ? CropImageView.CropShape.OVAL : CropImageView.CropShape.RECTANGLE)
+                    .setActivityMenuIconColor(getResources().getColor(android.R.color.white))
+//                            .setBorderCornerColor(getThemeColor(getApplicationContext(), R.attr.colorAccent))
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .start(this);
+        }
     }
 
     /**
      * Returns the image result from CropActivity
+     *
      * @param result the result data
      */
     private void getImageFromCropActivity(CropImage.ActivityResult result) {
-//        if (result != null) {
-//            try {
-//                Uri selectedImage = result.getUri();
-//                if (selectedImage != null) {
-//                    bitmapImage = FileUtils.retrieveBitmapFromFileURI(this, selectedImage, 200, 200);
-//                }
-//                if (listener != null) {
-////                        dumpImageMetaData(selectedImage);
-//                    listener.onGetBitmap(bitmapImage, displayName);
-//                } else {
-////                        dumpImageMetaData(selectedImage);
-//                    ArrayList<Bitmap> bitmaps = new ArrayList<>();
-//                    dumpImageMetaDataMulti(selectedImage);
-//                    bitmaps.add(bitmapImage);
-//                    if (listenerMulti != null) {
-//                        listenerMulti.onGetBitmap(bitmaps, displayNameMulti);
-//                    }
-//                }
-//                this.finish();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                this.finish();
-//            }
-//        } else {
-//            finish();
-//        }
-
+        if (result != null) {
+            try {
+                Uri selectedImage = result.getUri();
+                Bitmap bitmapImage = null;
+                SDCardProvider.ImagePickerListener imagePickerListener = SDCardProvider.getInstance().getImagePickerListener();
+                if (selectedImage != null) {
+                    bitmapImage = FileUtils.retrieveBitmapFromFileURI(this, selectedImage, 200, 200);
+                }
+                if (imagePickerListener != null) {
+                    String displayName = FileUtils.dumpImageMetaData(this, selectedImage);
+                    imagePickerListener.onImagePicked(bitmapImage, displayName);
+                }
+                clearNFinishActivity();
+            } catch (IOException e) {
+                e.printStackTrace();
+                clearNFinishActivity();
+            }
+        } else {
+            clearNFinishActivity();
+        }
     }
 
     //<editor-fold desc="finish this activity">

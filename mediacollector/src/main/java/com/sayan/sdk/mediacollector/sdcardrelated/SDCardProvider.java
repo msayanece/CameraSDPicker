@@ -84,8 +84,9 @@ public class SDCardProvider {
         return shouldCropShapeOval;
     }
 
-
-
+    public ImagePickerListener getImagePickerListener() {
+        return imagePickerListener;
+    }
 
     //</editor-fold>
 
