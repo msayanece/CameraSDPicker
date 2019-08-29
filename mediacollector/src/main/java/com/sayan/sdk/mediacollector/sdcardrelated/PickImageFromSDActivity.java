@@ -29,31 +29,32 @@ public class PickImageFromSDActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
-            requestPermissionForReadExternalStorage();
-        } else {
-
-        }
+        requestPermissionForReadExternalStorage();
     }
 
+    //<editor-fold desc="permission related">
+    // External Storage permission
     private boolean requestPermissionForReadExternalStorage() {
         if (ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            // explanation?
+            // Permission not granted yet
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // No rationale required in this case - Request permission
                 //Toast.makeText(getApplicationContext(), "External storage permission is mandatory",Toast.LENGTH_LONG).show();
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         REQUEST_FOR_READ_EXTERNAL_STORAGE);
             } else {
+                // Request permission
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         REQUEST_FOR_READ_EXTERNAL_STORAGE);
             }
             return true;
         } else {
+            //permission already granted
             imageFileChooserIntent();
             return false;
         }
@@ -75,11 +76,16 @@ public class PickImageFromSDActivity extends Activity {
             }
         }
     }
+    //</editor-fold>
 
+    /**
+     * Open Gallery
+     */
     private void imageFileChooserIntent() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);     //only local storage image allowed
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_IMAGE_INTENT);
     }
 
@@ -113,17 +119,18 @@ public class PickImageFromSDActivity extends Activity {
                 }
                 if (!SDCardProvider.getInstance().isShouldCropImage()) {
                     SDCardProvider.getInstance().getImagePickerListener().onImagePicked(bitmapImage, displayName);
-                    finish();
+                    clearNFinishActivity();
                 } else {
                     showImageCropperActivity(data, SDCardProvider.getInstance().isShouldCropShapeOval());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                finish();
+                clearNFinishActivity();
             }
         }
     }
 
+    //<editor-fold desc="Crop image related">
     /**
      * Shows the image cropper activity where user can crop the picked image in oval shape or
      * rectangle shape
@@ -170,6 +177,7 @@ public class PickImageFromSDActivity extends Activity {
             clearNFinishActivity();
         }
     }
+    //</editor-fold>
 
     //<editor-fold desc="finish this activity">
     private void clearNFinishActivity() {
