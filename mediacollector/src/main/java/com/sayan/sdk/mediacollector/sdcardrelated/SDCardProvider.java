@@ -8,6 +8,8 @@ import com.sayan.sdk.mediacollector.camerarelated.CaptureImageActivity;
 import com.sayan.sdk.mediacollector.camerarelated.CaptureVideoActivity;
 import com.sayan.sdk.mediacollector.exceptions.CameraProviderSetupException;
 
+import java.io.File;
+
 /**
  * <p>Generic Plain java class which help to fetch image as a bitmap taking from camera
  * without the need to setting all the permission request call backs or onActivityResults
@@ -20,10 +22,10 @@ public class SDCardProvider {
         void onImagePicked(Bitmap bitmap, String imagePath);
     }
 
-//    public interface GetVideoFileListener {
-//        void onGetFile(File file);
-//    }
-//
+    public interface VideoPickerListener {
+        void onVideoPicked(File file);
+    }
+
 //    public interface GetAnyFileListener {
 //        void onGetFile(File file);
 //    }
@@ -50,8 +52,8 @@ public class SDCardProvider {
     private boolean shouldCropImage;
     private boolean shouldCropShapeOval;
     private ImagePickerListener imagePickerListener;
-
     //Video
+    private VideoPickerListener videoPickerListener;
 
     //</editor-fold>
 
@@ -86,6 +88,10 @@ public class SDCardProvider {
 
     public ImagePickerListener getImagePickerListener() {
         return imagePickerListener;
+    }
+
+    public VideoPickerListener getVideoPickerListener() {
+        return videoPickerListener;
     }
 
     //</editor-fold>
@@ -126,17 +132,17 @@ public class SDCardProvider {
     //</editor-fold>
 
     //<editor-fold desc="capturing video">
-//    public void setupProviderForVideo(VideoPickerListener videoPickerListener) {
-//        this.videoPickerListener = videoPickerListener;
-//    }
-//
-//    public void captureVideo() {
-//        if (videoPickerListener == null) throw new CameraProviderSetupException("videoPickerListener not set.");
-//        if (context == null) throw new CameraProviderSetupException("Context is not set. " +
-//                "(Use Activity onStart() method to initialize & setup CameraProvider)");
-//        Intent intent = new Intent(context, CaptureVideoActivity.class);
-//        context.startActivity(intent);
-//    }
+    public void setupProviderForVideo(VideoPickerListener videoPickerListener) {
+        this.videoPickerListener = videoPickerListener;
+    }
+
+    public void pickVideo() {
+        if (videoPickerListener == null) throw new CameraProviderSetupException("videoPickerListener not set.");
+        if (context == null) throw new CameraProviderSetupException("Context is not set. " +
+                "(Use Activity onStart() method to initialize & setup CameraProvider)");
+        Intent intent = new Intent(context, PickVideoFromSDActivity.class);
+        context.startActivity(intent);
+    }
     //</editor-fold>
 
     public void releaseProviderData(){
@@ -144,6 +150,6 @@ public class SDCardProvider {
         shouldCropImage = false;
         shouldCropShapeOval = false;
         imagePickerListener = null;
-//        videoPickerListener = null;
+        videoPickerListener = null;
     }
 }

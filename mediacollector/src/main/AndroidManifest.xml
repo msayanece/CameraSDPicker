@@ -3,10 +3,13 @@
     package="com.sayan.sdk.mediacollector">
 
     <application android:largeHeap="true">
-        <activity android:name=".sdcardrelated.PickImageFromSDActivity"
+        <activity android:name=".sdcardrelated.PickVideoFromSDActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
-            />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
+        <activity
+            android:name=".sdcardrelated.PickImageFromSDActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
         <activity
             android:name=".camerarelated.CaptureVideoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -37,9 +40,9 @@
                 android:resource="@xml/provider_paths" />
         </provider>
     </application>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 </manifest>

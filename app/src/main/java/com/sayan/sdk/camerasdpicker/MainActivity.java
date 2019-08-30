@@ -6,20 +6,25 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.VideoView;
 
 import com.sayan.sdk.mediacollector.camerarelated.CameraProvider;
 import com.sayan.sdk.mediacollector.sdcardrelated.SDCardProvider;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
     private SDCardProvider sdCardProvider;
     private ImageView imageView;
     private CameraProvider cameraProvider;
+    private VideoView videoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         imageView = findViewById(R.id.image);
+        videoView = findViewById(R.id.video);
     }
 
     @Override
@@ -36,12 +41,21 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });*/
 
-        //initialize CameraProvider & setup data for Video
+        /*
         sdCardProvider = SDCardProvider.getInstance(this);
         sdCardProvider.setupProviderForImage(true, false, new SDCardProvider.ImagePickerListener() {
             @Override
             public void onImagePicked(Bitmap bitmap, String imagePath) {
                 imageView.setImageBitmap(bitmap);
+            }
+        });*/
+
+        sdCardProvider = SDCardProvider.getInstance(this);
+        sdCardProvider.setupProviderForVideo(new SDCardProvider.VideoPickerListener() {
+            @Override
+            public void onVideoPicked(File file) {
+                 videoView.setVideoPath(file.getAbsolutePath());
+                 videoView.start();
             }
         });
     }
@@ -59,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void choosePic(View view) {
-        sdCardProvider.pickImage();
+        sdCardProvider.pickVideo();
 //        cameraProvider.captureImage();
     }
 }
