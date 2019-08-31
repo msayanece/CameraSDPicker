@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.sayan.sdk.mediacollector.camerarelated.CameraProvider;
@@ -50,12 +51,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
 
-        sdCardProvider = SDCardProvider.getInstance(this);
+        /*sdCardProvider = SDCardProvider.getInstance(this);
         sdCardProvider.setupProviderForVideo(new SDCardProvider.VideoPickerListener() {
             @Override
             public void onVideoPicked(File file) {
                  videoView.setVideoPath(file.getAbsolutePath());
                  videoView.start();
+            }
+        });*/
+
+        sdCardProvider = SDCardProvider.getInstance(this);
+        sdCardProvider.setupProviderForAnyFile(new SDCardProvider.AnyFilePickerListener() {
+            @Override
+            public void onFilePicked(File file) {
+                Toast.makeText(MainActivity.this, "File: " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -73,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void choosePic(View view) {
-        sdCardProvider.pickVideo();
+        sdCardProvider.pickAnyFile();
 //        cameraProvider.captureImage();
     }
 }

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 
+import androidx.annotation.Nullable;
+
 import com.sayan.sdk.mediacollector.camerarelated.CaptureImageActivity;
 import com.sayan.sdk.mediacollector.camerarelated.CaptureVideoActivity;
 import com.sayan.sdk.mediacollector.exceptions.CameraProviderSetupException;
@@ -19,17 +21,17 @@ public class SDCardProvider {
 
     //<editor-fold desc="listeners">
     public interface ImagePickerListener {
-        void onImagePicked(Bitmap bitmap, String imagePath);
+        void onImagePicked(@Nullable Bitmap bitmap,@Nullable  String imagePath);
     }
 
     public interface VideoPickerListener {
-        void onVideoPicked(File file);
+        void onVideoPicked(@Nullable File file);
     }
 
-//    public interface GetAnyFileListener {
-//        void onGetFile(File file);
-//    }
-//
+    public interface AnyFilePickerListener {
+        void onFilePicked(@Nullable File file);
+    }
+
 //    public interface GetBitmapListenerMulti {
 //        void onGetBitmap(List<Bitmap> bitmaps, List<String> imagePaths);
 //    }
@@ -54,6 +56,8 @@ public class SDCardProvider {
     private ImagePickerListener imagePickerListener;
     //Video
     private VideoPickerListener videoPickerListener;
+    //Any File
+    private AnyFilePickerListener anyFilePickerListener;
 
     //</editor-fold>
 
@@ -94,6 +98,10 @@ public class SDCardProvider {
         return videoPickerListener;
     }
 
+    public AnyFilePickerListener getAnyFilePickerListener() {
+        return anyFilePickerListener;
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="setters">
@@ -111,6 +119,14 @@ public class SDCardProvider {
 
     void setImagePickerListener(ImagePickerListener imagePickerListener) {
         this.imagePickerListener = imagePickerListener;
+    }
+
+    void setVideoPickerListener(VideoPickerListener videoPickerListener) {
+        this.videoPickerListener = videoPickerListener;
+    }
+
+    void setAnyFilePickerListener(AnyFilePickerListener anyFilePickerListener) {
+        this.anyFilePickerListener = anyFilePickerListener;
     }
 
     //</editor-fold>
@@ -145,11 +161,26 @@ public class SDCardProvider {
     }
     //</editor-fold>
 
+    //<editor-fold desc="capturing any file">
+    public void setupProviderForAnyFile(AnyFilePickerListener anyFilePickerListener) {
+        this.anyFilePickerListener = anyFilePickerListener;
+    }
+
+    public void pickAnyFile() {
+        if (anyFilePickerListener == null) throw new CameraProviderSetupException("anyFilePickerListener not set.");
+        if (context == null) throw new CameraProviderSetupException("Context is not set. " +
+                "(Use Activity onStart() method to initialize & setup CameraProvider)");
+        Intent intent = new Intent(context, PickAnyFileFromSDActivity.class);
+        context.startActivity(intent);
+    }
+    //</editor-fold>
+
     public void releaseProviderData(){
         context = null;
         shouldCropImage = false;
         shouldCropShapeOval = false;
         imagePickerListener = null;
         videoPickerListener = null;
+        anyFilePickerListener = null;
     }
 }
