@@ -30,6 +30,7 @@ public class CameraProvider {
 
     //<editor-fold desc="properties">
     private Context context;
+    private String tag;
     //Image
     private boolean shouldCropImage;
     private boolean shouldCropShapeOval;
@@ -102,7 +103,8 @@ public class CameraProvider {
     //</editor-fold>
 
     //<editor-fold desc="capturing image">
-    public void setupProviderForImage(boolean shouldCropImage, boolean shouldCropShapeOval, ImagePickerListener imagePickerListener) {
+    public void setupProviderForImage(String tag, boolean shouldCropImage, boolean shouldCropShapeOval, ImagePickerListener imagePickerListener) {
+        this.tag = tag;
         this.shouldCropImage = shouldCropImage;
         this.shouldCropShapeOval = shouldCropShapeOval;
         this.imagePickerListener = imagePickerListener;
@@ -118,7 +120,8 @@ public class CameraProvider {
     //</editor-fold>
 
     //<editor-fold desc="capturing video">
-    public void setupProviderForVideo(VideoPickerListener videoPickerListener) {
+    public void setupProviderForVideo(String tag, VideoPickerListener videoPickerListener) {
+        this.tag = tag;
         this.videoPickerListener = videoPickerListener;
     }
 
@@ -131,11 +134,13 @@ public class CameraProvider {
     }
     //</editor-fold>
 
-    public void releaseProviderData(){
-        context = null;
-        shouldCropImage = false;
-        shouldCropShapeOval = false;
-        imagePickerListener = null;
-        videoPickerListener = null;
+    public void releaseProviderData(String tag){
+        if (this.tag.equals(tag)) {
+            context = null;
+            shouldCropImage = false;
+            shouldCropShapeOval = false;
+            imagePickerListener = null;
+            videoPickerListener = null;
+        }
     }
 }
